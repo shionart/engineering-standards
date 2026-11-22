@@ -1,6 +1,15 @@
 # engineering-standards
 
-A Claude Code plugin that ships one skill, `engineering-standards`, and a small hook that makes sure Claude uses it before it writes code.
+A Claude Code plugin with one skill, `engineering-standards`, and a set of hooks that make Claude load it before it writes code. It is for developers who want Claude to pick a fitting stack, plan, test first and verify its work on every task, including small scripts.
+
+## Install
+
+```
+/plugin marketplace add shionart/engineering-standards
+/plugin install engineering-standards@shionart
+```
+
+Manual alternative, skill only and without the gate: copy `skills/engineering-standards` into `~/.claude/skills/`.
 
 ## What the skill does
 
@@ -33,22 +42,15 @@ The rules that always apply:
 
 The plugin registers five hooks (`hooks/hooks.json`):
 
-- `PreToolUse` (`gate`): blocks Edit, Write, NotebookEdit, MultiEdit and Bash calls that write a code or script file until the calling agent has used the skill. Subagents share the parent's session id, so the flag is kept per agent: the main agent loading the skill does not unlock its subagents, and each subagent must load it itself.
+- `PreToolUse` (`gate`): blocks Edit, Write, NotebookEdit, MultiEdit and Bash calls that write a code or script file until the calling agent has used the skill.
 - `PostToolUse` on the Skill tool (`mark`): records that the calling agent (main or subagent) used the skill.
 - `SessionStart` (`reset`): forgets it again, for the main agent and every subagent, on a new session, resume, clear or compaction.
 - `SubagentStop` (`agent_stop`): forgets the flag of the subagent that finished.
-- `Stop` (`reply`): on by default. It sends a reply back if it lacks a closing block (Updated, Created, Removed, Not done, and a line naming relevant skills not used). Turn it off with `ENG_STANDARDS_REPLY_CHECK=0`.
+- `Stop` (`reply`): sends a reply back if it lacks a closing block (Updated, Created, Removed, Not done, and a line naming relevant skills not used).
 
-Limits: a Bash command that hides the write in a way the patterns do not see (for example a script file that writes code) is not caught. The hook allows the call when its input cannot be read, or when no Python 3.10+ is found, so a bug here never locks every tool.
+Subagents share the parent's session id, so the flag is kept per agent. The main agent loading the skill does not unlock its subagents, and each subagent must load it itself.
 
-## Install
-
-```
-/plugin marketplace add shionart/engineering-standards
-/plugin install engineering-standards@shionart
-```
-
-Manual alternative, skill only and without the gate: copy `skills/engineering-standards` into `~/.claude/skills/`.
+The closing-block check on `Stop` is on by default. Turn it off with `ENG_STANDARDS_REPLY_CHECK=0`.
 
 ## Requirements
 
@@ -71,9 +73,9 @@ Set them in the `env` block of your Claude Code user settings file:
 }
 ```
 
-## Companion skills (not bundled)
+## Companion skills
 
-The workflow names other skills for specific areas. They are not included in this plugin, and the workflow degrades gracefully: when one is not installed, Claude follows that step without it. Sources, as listed in `skills/engineering-standards/vetted-skills.md`:
+The workflow names other skills for specific areas. They are not bundled with this plugin, and the workflow degrades gracefully: when one is not installed, Claude follows that step without it. Sources, as listed in `skills/engineering-standards/vetted-skills.md`:
 
 - obra/superpowers: plan, test-driven development, verification, debugging
 - mattpocock/skills: `codebase-design`, `improve-codebase-architecture`
@@ -89,9 +91,9 @@ The workflow names other skills for specific areas. They are not included in thi
 
 `vetted-skills.md` also records the pinned commits and how to vet a new skill before installing it.
 
-## Credits
+## Limits
 
-The reuse-first ladder is adapted from DietrichGebert/ponytail (MIT). The fresh-context plan review is based on the idea in google/elephant-goldfish-model (Apache-2.0). Both were rewritten; no code was copied.
+A Bash command that hides the write in a way the patterns do not see (for example a script file that writes code) is not caught. The hook allows the call when its input cannot be read, or when no Python 3.10+ is found, so a bug here never locks every tool.
 
 ## Tests
 
@@ -99,6 +101,10 @@ The reuse-first ladder is adapted from DietrichGebert/ponytail (MIT). The fresh-
 cd hooks/gate
 python -m unittest discover -s tests -t .
 ```
+
+## Credits
+
+The reuse-first ladder is adapted from DietrichGebert/ponytail (MIT). The fresh-context plan review is based on the idea in google/elephant-goldfish-model (Apache-2.0). Both were rewritten; no code was copied.
 
 ## License
 
