@@ -1,6 +1,6 @@
 {
   "name": "engineering-standards",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Entry point for ANY task that writes, changes, reviews or designs code or scripts, in any project and any language. Picks the best-fit tech stack for the problem first (fit beats what is already installed), then runs the build workflow (plan, design, test first, implement under SOLID-style rules, simplify, review, verify). Use before the first line of code, also for small scripts, automation, bots, integrations, plugins, refactors, Dockerfiles and frontend/UI design.",
   "author": {
     "name": "shionart"

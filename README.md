@@ -9,6 +9,8 @@ A Claude Code plugin with one skill, `engineering-standards`, and a set of hooks
 /plugin install engineering-standards@shionart
 ```
 
+Then run `/engineering-standards:setup` to check which companion skills you have.
+
 Manual alternative, skill only and without the gate: copy `skills/engineering-standards` into `~/.claude/skills/`.
 
 ## What the skill does
@@ -75,21 +77,7 @@ Set them in the `env` block of your Claude Code user settings file:
 
 ## Companion skills
 
-The workflow names other skills for specific areas. They are not bundled with this plugin, and the workflow degrades gracefully: when one is not installed, Claude follows that step without it. Sources, as listed in `skills/engineering-standards/vetted-skills.md`:
-
-- obra/superpowers: plan, test-driven development, verification, debugging
-- mattpocock/skills: `codebase-design`, `improve-codebase-architecture`
-- wshobson/agents: the Python skills and `rust-async-patterns`
-- apollographql/skills: `rust-best-practices`
-- affaan-m/ecc: `rust-testing`
-- kaankiziltug/logo-design-skill: `logo-design`
-- pbakaus/impeccable: `impeccable`
-- leonxlnx/taste-skill: `design-taste-frontend`
-- emilkowalski/skills: animation, `emil-design-eng`, `break-ui` and related
-- cloudflare/security-audit-skill: `security-audit`
-- petergyang/no-ai-slop: `no-ai-slop`
-
-`vetted-skills.md` also records the pinned commits and how to vet a new skill before installing it.
+The workflow names other skills for specific areas. They are not bundled, because each has its own licence and update cycle and we only vouch for the commits we vetted. Claude uses the skills you already have and substitutes an installed skill that covers the same role, or follows the step without one. Run `/engineering-standards:setup` to see what is missing and install it, one item at a time with your approval. The full list, with source URLs and install commands, is in [`skills/engineering-standards/companion-skills.md`](skills/engineering-standards/companion-skills.md).
 
 ## Limits
 

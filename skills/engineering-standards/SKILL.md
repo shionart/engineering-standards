@@ -5,7 +5,7 @@ description: Entry point for ANY task that writes, changes, reviews or designs c
 
 # Engineering standards
 
-One entry point. Load it before writing or changing code, then follow the steps in order. Skip a step only when it clearly does not apply to the task (a one-line fix does not need a stack decision), and say which step you skipped. The skills named below are listed with their sources in "Skills by area"; if one is not installed, follow the step without it.
+One entry point. Load it before writing or changing code, then follow the steps in order. Skip a step only when it clearly does not apply to the task (a one-line fix does not need a stack decision), and say which step you skipped. The skills named below are defaults, listed with their sources and install commands in `companion-skills.md`; if one is not installed, "Skills by area" says what to do.
 
 Subagents follow this skill too: each one that writes or reviews code loads it itself; a reviewer accepts a subagent's work only when its report shows the skill was loaded and the steps ran.
 
@@ -72,7 +72,7 @@ Use `superpowers-verification-before-completion`: run the tests and the real thi
 
 ## Skills by area
 
-Load the skills that match the work at the step where they apply. Pick the first one in a row by default and add the others only for what they cover. Skills marked * have not been vetted yet (see `vetted-skills.md`): use their guidance, but do not run their scripts until they have been scanned.
+Each row names an area and the default skills for it. Before each step, check the list of available skills in your context. Use the default if it is installed; if not, use an installed skill that covers the same role and say which one in one line. If nothing installed covers the role, follow the step without a skill and mention the missing default once, with its install command from `companion-skills.md`. Never install a skill without asking the user. Pick the first skill in a row by default and add the others only for what they cover. Skills marked * have not been vetted yet (see `vetted-skills.md`): use their guidance, but do not run their scripts until they have been scanned.
 
 | Area | Skills |
 |---|---|
@@ -91,3 +91,4 @@ Load the skills that match the work at the step where they apply. Pick the first
 - Stack rubric and ADR template: `stack-selection.md`.
 - Dockerfile checklist and image checks: `docker-images.md`.
 - Vetted third-party skills, pinned commits, sources and how to vet new ones: `vetted-skills.md`.
+- Source, install command and vetting status of every default skill: `companion-skills.md`. To see what is missing on this machine, run `/engineering-standards:setup`.
