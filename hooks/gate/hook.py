@@ -3,7 +3,7 @@
   hook.py gate    PreToolUse   blocks code writes until the skill was used in this session
   hook.py mark    PostToolUse  on the Skill tool: remembers that engineering-standards was used
   hook.py reset   SessionStart forgets it again (new session, resume, compaction, clear)
-  hook.py reply   Stop         (only when ENG_STANDARDS_REPLY_CHECK=1) sends a reply back when it lacks the closing block (Updated, Created,
+  hook.py reply   Stop         (on by default, off with ENG_STANDARDS_REPLY_CHECK=0) sends a reply back when it lacks the closing block (Updated, Created,
                                Removed, Not done, Relevant skill(s) not used)
 
 Exit code 2 blocks the tool call and shows the message to Claude. Any problem reading the

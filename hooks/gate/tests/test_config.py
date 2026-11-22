@@ -10,7 +10,7 @@ class ConfigTests(unittest.TestCase):
     def test_defaults_when_nothing_is_set(self):
         config = Config.from_env({})
         self.assertEqual(config.state_dir, DEFAULT_STATE_DIR)
-        self.assertFalse(config.reply_check)
+        self.assertTrue(config.reply_check)
 
     def test_the_plugin_data_dir_is_used_when_present(self):
         config = Config.from_env({"CLAUDE_PLUGIN_DATA": "/data/p"})
@@ -20,10 +20,13 @@ class ConfigTests(unittest.TestCase):
         config = Config.from_env({"ENG_STANDARDS_STATE_DIR": "/s", "CLAUDE_PLUGIN_DATA": "/data/p"})
         self.assertEqual(config.state_dir, Path("/s"))
 
-    def test_the_reply_check_is_on_only_for_exactly_1(self):
-        self.assertTrue(Config.from_env({"ENG_STANDARDS_REPLY_CHECK": "1"}).reply_check)
-        for value in ("0", "", "true"):
-            self.assertFalse(Config.from_env({"ENG_STANDARDS_REPLY_CHECK": value}).reply_check)
+    def test_the_reply_check_is_on_unless_explicitly_turned_off(self):
+        for value in ("1", "", "true", "yes", "anything"):
+            self.assertTrue(Config.from_env({"ENG_STANDARDS_REPLY_CHECK": value}).reply_check, value)
+
+    def test_the_reply_check_is_off_for_0_false_off_and_no_in_any_case(self):
+        for value in ("0", "false", "FALSE", "off", "Off", "no", "NO"):
+            self.assertFalse(Config.from_env({"ENG_STANDARDS_REPLY_CHECK": value}).reply_check, value)
 
 
 if __name__ == "__main__":
