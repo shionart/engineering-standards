@@ -1,0 +1,16 @@
+{
+  "name": "shionart",
+  "owner": {
+    "name": "shionart"
+  },
+  "metadata": {
+    "description": "Claude Code plugins by shionart: the engineering-standards workflow skill and its enforcing gate."
+  },
+  "plugins": [
+    {
+      "name": "engineering-standards",
+      "source": "./",
+      "description": "An engineering workflow skill (stack choice, plan, tests first, SOLID rules, review, verify) plus a hook that blocks code writes until the skill has been used."
+    }
+  ]
+}
