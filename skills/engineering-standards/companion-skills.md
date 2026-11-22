@@ -45,6 +45,8 @@ Skills are not bundled with the plugin. Each has its own licence and update cycl
 | Toasts | `ask-sonner` | https://github.com/emilkowalski/skills | `npx skills add emilkowalski/skills --skill ask-sonner -g -a claude-code` | not yet |
 | React Native | `animate-expo` | https://github.com/emilkowalski/skills | `npx skills add emilkowalski/skills --skill animate-expo -g -a claude-code` | not yet |
 | Swift | `write-swift` | https://github.com/emilkowalski/skills | `npx skills add emilkowalski/skills --skill write-swift -g -a claude-code` | not yet |
+| Modern web platform APIs, Baseline compatibility, accessibility and performance | `modern-web-guidance` | https://github.com/GoogleChrome/modern-web-guidance | `/plugin marketplace add GoogleChrome/modern-web-guidance` then `/plugin install modern-web-guidance@googlechrome` | yes, 64a6d708f5a43f2cd3fde5d4d7db3905ba1bdf65 (npm runtime 1.0.1 only, see `vetted-skills.md`) |
+| Chrome extensions (Manifest V3) | `chrome-extensions` | https://github.com/GoogleChrome/modern-web-guidance (same plugin as above) | same plugin as above | yes, 64a6d708f5a43f2cd3fde5d4d7db3905ba1bdf65 (npm runtime 1.0.1 only, see `vetted-skills.md`) |
 
 ## Python
 
@@ -92,7 +94,7 @@ All six come from the `python-development` plugin of wshobson/agents, and each i
 | Simplify changed code | `simplify` | built into Claude Code | nothing to install | built in |
 | Review a diff | `code-review` | built into Claude Code | nothing to install | built in |
 | Review pending changes for security | `security-review` | built into Claude Code | nothing to install | built in |
-| Audit a whole codebase for security | `security-audit` | https://github.com/cloudflare/security-audit-skill | `npx skills add https://github.com/cloudflare/security-audit-skill --skill security-audit -g -a claude-code` | not yet |
+| Audit a whole codebase for security | `security-audit` | https://github.com/cloudflare/security-audit-skill | `npx skills add cloudflare/security-audit-skill@c1c8a8c1471069fb0e188eeaff69b8e8db6564a8 --skill security-audit -g -a claude-code` | yes, c1c8a8c1471069fb0e188eeaff69b8e8db6564a8 |
 | Review motion | `review-animations` | https://github.com/emilkowalski/skills | `npx skills add emilkowalski/skills --skill review-animations -g -a claude-code` | not yet |
 
 ## Done

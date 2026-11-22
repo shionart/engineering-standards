@@ -35,7 +35,7 @@ For anything bigger than a quick fix, use `superpowers-writing-plans` (or `super
 
 Never cut validation at trust boundaries, error handling that prevents data loss, security or accessibility to make code smaller. (Adapted from DietrichGebert/ponytail, MIT.)
 
-**Then design.** New structure or a messy module: use `codebase-design`, and for existing code suggest the user runs `/improve-codebase-architecture` (it is user-invoked only, so you cannot call it yourself). Add the language skills from the table. If the language has none, look for one with `find-skills` and vet it as described in `vetted-skills.md` before installing. Do not install unvetted skills.
+**Then design.** New structure or a messy module: use `codebase-design`, and for existing code suggest the user runs `/improve-codebase-architecture` (it is user-invoked only, so you cannot call it yourself). Add the language skills from the table. If the language has none, look for one with `find-skills` and vet it as described in `vetted-skills.md` before installing. Do not install unvetted skills. For web front ends, record the browser-support target (for example Baseline Widely available) in the project's CLAUDE.md so platform guidance can apply it.
 
 ## 3. Rules that always apply (SOLID in practice)
 
@@ -78,12 +78,12 @@ Each row names an area and the default skills for it. Before each step, check th
 |---|---|
 | Plan and architecture | `superpowers-brainstorming` (goal unclear), `superpowers-writing-plans`, `codebase-design`, `improve-codebase-architecture` |
 | UI/UX design | `logo-design` (first when no logo exists, rule 11), `impeccable`* (design, critique, audit, polish, UX copy, accessibility), `ui-ux-pro-max`* (style, palette and font data), `design-taste-frontend`* (public pages: landing, marketing, portfolio), `emil-design-eng`* (finishing details), `design-system`* (tokens), `apple-design`* (gesture and spring-driven UI) |
-| Frontend build | `ui-styling`* (shadcn/ui and Tailwind), `pick-ui-library`* (choosing a component library), `animate`* plus `animation-performance`* (motion), `mobile-native`* (web app on a phone), `ask-sonner`* (toasts), `animate-expo`* (React Native), `write-swift`* (Swift) |
+| Frontend build | `ui-styling`* (shadcn/ui and Tailwind), `pick-ui-library`* (choosing a component library), `animate`* plus `animation-performance`* (motion), `mobile-native`* (web app on a phone), `ask-sonner`* (toasts), `animate-expo`* (React Native), `write-swift`* (Swift), `modern-web-guidance` (modern HTML/CSS/JS APIs, Baseline, performance), `chrome-extensions` (extensions) |
 | Python | design: `python-design-patterns`, `python-project-structure`; build: `python-error-handling`, `python-type-safety`; test: `python-testing-patterns`; review: `python-anti-patterns`, `python-type-safety` |
 | Rust | build: `rust-best-practices`, `rust-async-patterns`; test: `rust-testing` |
 | Other backend | HTTP APIs: `postman:api-engineer`. LLM features: `claude-api`. Boomi: `bc-integration:boomi-integration` |
 | Testing | `superpowers-test-driven-development` first, then `postman:api-testing` (API contracts), `break-ui`* (UI worst-case data), the Playwright MCP or `run` (real app and page), `superpowers-systematic-debugging` (when a test fails for an unclear reason) |
-| Review | `simplify`, `code-review`, `security-review` (pending changes), `security-audit`* (whole codebase), `review-animations`* (motion) |
+| Review | `simplify`, `code-review`, `security-review` (pending changes), `security-audit` (whole codebase), `review-animations`* (motion) |
 | Done | `superpowers-verification-before-completion` |
 
 ## Where things live

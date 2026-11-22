@@ -62,6 +62,15 @@ Both repos were cloned and scanned (SkillSpector 100/100 on each; every finding 
 | Reuse-first ladder and "never cut" list | DietrichGebert/ponytail (196K, MIT) | 96608e078b2d5ea607c5c3b8b5a54d1c1fba6846 | Step 2 "Reuse first", step 5 bullets. The plugin was not installed: its always-on hooks inject an instruction to edit `~/.claude/settings.json` and read session history. |
 | Fresh-context ("goldfish") plan review | google/elephant-goldfish-model (21.9K, Apache-2.0) | 7d1b721e51448518cc9b0336465041230200dd10 | Step 1 "Fresh-eyes review for large work", one pass instead of its five-stage subagent loop. |
 
+## Added 23 Nov 2026
+
+SkillSpector `--no-llm`, pattern sweep, zero-width and bidi check (none found in either), and a read of the SKILL.md and every runtime script.
+
+| Skill | Source repo (stars) | Commit | Scan result |
+|---|---|---|---|
+| modern-web-guidance and chrome-extensions (one plugin, marketplace `googlechrome`) | GoogleChrome/modern-web-guidance (24.9K, Apache-2.0) | 64a6d708f5a43f2cd3fde5d4d7db3905ba1bdf65 | SkillSpector reported 226 findings, spot-checked and judged false positives (bundled data and guide text). Runtime is the npm package `modern-web-guidance`, read in full without running it: vetted version **1.0.1** (integrity `sha512-5ztUh5F1p2PewnSkA6EhsGUXqomaZY9qe6iWJCU4JbIQxHTky7s5lMJcPE4EbD1uhbQZIhl0HROH0+s6fIiGzg==`). No install scripts, no dependencies (the TypeScript compiler inside `legacy-scan.mjs` is bundled). Network: only anonymous usage telemetry to `https://play.googleapis.com/log` through a detached helper process, sending the search query text, guide id, OS, agent name and package version; turn it off with `DISABLE_TELEMETRY=1`. Writes: a guide file in the temp folder for large output; `.mwgrc` only when a human runs a `set-*` command; `modern-web.log` only if `ENABLE_FILE_LOGGING=true`. `install`, `update` and `uninstall` run `npx skills` and are not used by the skill. No eval, no code loaded from the network. **Caveat:** the skill always runs `npx -y modern-web-guidance@latest`, and we cannot pin it without editing the skill, so any npm version after 1.0.1 is unvetted. Re-vet when a new version appears. |
+| security-audit | cloudflare/security-audit-skill (77K, MIT) | c1c8a8c1471069fb0e188eeaff69b8e8db6564a8 | The installed copy (installed 4 Nov 2026 with `npx skills`) is identical to this commit. Score 100/100 DO_NOT_INSTALL, 75% coverage, but all 14 findings reviewed by hand and judged false positives: AE1 x4 are references to files the skill writes at run time (`findings.json` and others), PE3 and MP3 are audit checklist text about credentials and memory, PE3 x3 are temp folders in the validators' own tests, EA2, TM3 and PE1 are checklist text. The four `.cjs` files use only `fs`, `path` and `util` (tests also spawn `node`), with no network. The skill itself requires a sandbox for any target code it runs. |
+
 ## Installed before the vetting rule, not yet scanned (listed 19 Nov 2026)
 
 These were installed in Oct 2026 without a SkillSpector scan. `engineering-standards` marks them with * in its "Skills by area" table. Their guidance may be used, but their scripts must not run until they have been scanned with the process above.
@@ -71,7 +80,6 @@ These were installed in Oct 2026 without a SkillSpector scan. `engineering-stand
 | animate, animate-expo, animation-performance, animation-vocabulary, apple-design, ask-sonner, break-ui, emil-design-eng, find-animation-opportunities, improve-animations, review-animations, mobile-native, pick-ui-library, prototype, write-swift | emilkowalski/skills (via `npx skills`) |
 | impeccable | pbakaus/impeccable |
 | design-taste-frontend | leonxlnx/taste-skill |
-| security-audit | cloudflare/security-audit-skill |
 | banner-design, brand, design, design-system, slides, ui-styling | claudekit |
 | ui-ux-pro-max | no source recorded |
 | superpowers-* (14) | obra/superpowers |
