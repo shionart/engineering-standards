@@ -18,8 +18,8 @@ Skills are not bundled with the plugin. Each has its own licence and update cycl
 |---|---|---|---|---|
 | Clarify an unclear goal | `superpowers-brainstorming` | https://github.com/obra/superpowers | `/plugin install superpowers@claude-plugins-official` (or `/plugin marketplace add obra/superpowers-marketplace` then `/plugin install superpowers@superpowers-marketplace`) | not yet |
 | Write a step-by-step plan | `superpowers-writing-plans` | https://github.com/obra/superpowers | same plugin as above | not yet |
-| Design deep modules | `codebase-design` | https://github.com/mattpocock/skills | `npx skills add mattpocock/skills --skill codebase-design -g -a claude-code` (or plugin: `/plugin install mattpocock-skills@claude-plugins-official`) | yes, 4ae2317ddb22b046e26455e4f9c9b3aaaf62212d |
-| Improve an existing codebase's structure | `improve-codebase-architecture` | https://github.com/mattpocock/skills | `npx skills add mattpocock/skills --skill improve-codebase-architecture -g -a claude-code` | yes, 4ae2317ddb22b046e26455e4f9c9b3aaaf62212d |
+| Design deep modules | `codebase-design` | https://github.com/mattpocock/skills | `npx skills add mattpocock/skills@4ae2317ddb22b046e26455e4f9c9b3aaaf62212d --skill codebase-design -g -a claude-code` (or plugin: `/plugin install mattpocock-skills@claude-plugins-official`) | yes, 4ae2317ddb22b046e26455e4f9c9b3aaaf62212d |
+| Improve an existing codebase's structure | `improve-codebase-architecture` | https://github.com/mattpocock/skills | `npx skills add mattpocock/skills@4ae2317ddb22b046e26455e4f9c9b3aaaf62212d --skill improve-codebase-architecture -g -a claude-code` | yes, 4ae2317ddb22b046e26455e4f9c9b3aaaf62212d |
 
 ## UI/UX design
 
@@ -52,20 +52,20 @@ All six come from the `python-development` plugin of wshobson/agents, and each i
 
 | Role | Default skill | Source | Install | Vetted |
 |---|---|---|---|---|
-| Design patterns | `python-design-patterns` | https://github.com/wshobson/agents (`plugins/python-development/skills/python-design-patterns`) | `npx skills add wshobson/agents --skill python-design-patterns -g -a claude-code` (or plugin: `/plugin marketplace add wshobson/agents` then `/plugin install python-development@claude-code-workflows`) | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
-| Project structure | `python-project-structure` | https://github.com/wshobson/agents | `npx skills add wshobson/agents --skill python-project-structure -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
-| Error handling | `python-error-handling` | https://github.com/wshobson/agents | `npx skills add wshobson/agents --skill python-error-handling -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
-| Type safety | `python-type-safety` | https://github.com/wshobson/agents | `npx skills add wshobson/agents --skill python-type-safety -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
-| Testing | `python-testing-patterns` | https://github.com/wshobson/agents | `npx skills add wshobson/agents --skill python-testing-patterns -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
-| Review for anti-patterns | `python-anti-patterns` | https://github.com/wshobson/agents | `npx skills add wshobson/agents --skill python-anti-patterns -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
+| Design patterns | `python-design-patterns` | https://github.com/wshobson/agents (`plugins/python-development/skills/python-design-patterns`) | `npx skills add wshobson/agents@9c61ab243def98f72da12abd41cfcf5bcd91af9d --skill python-design-patterns -g -a claude-code` (or plugin: `/plugin marketplace add wshobson/agents` then `/plugin install python-development@claude-code-workflows`) | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
+| Project structure | `python-project-structure` | https://github.com/wshobson/agents | `npx skills add wshobson/agents@9c61ab243def98f72da12abd41cfcf5bcd91af9d --skill python-project-structure -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
+| Error handling | `python-error-handling` | https://github.com/wshobson/agents | `npx skills add wshobson/agents@9c61ab243def98f72da12abd41cfcf5bcd91af9d --skill python-error-handling -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
+| Type safety | `python-type-safety` | https://github.com/wshobson/agents | `npx skills add wshobson/agents@9c61ab243def98f72da12abd41cfcf5bcd91af9d --skill python-type-safety -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
+| Testing | `python-testing-patterns` | https://github.com/wshobson/agents | `npx skills add wshobson/agents@9c61ab243def98f72da12abd41cfcf5bcd91af9d --skill python-testing-patterns -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
+| Review for anti-patterns | `python-anti-patterns` | https://github.com/wshobson/agents | `npx skills add wshobson/agents@9c61ab243def98f72da12abd41cfcf5bcd91af9d --skill python-anti-patterns -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
 
 ## Rust
 
 | Role | Default skill | Source | Install | Vetted |
 |---|---|---|---|---|
-| Idiomatic Rust | `rust-best-practices` | https://github.com/apollographql/skills | `npx skills add apollographql/skills --skill rust-best-practices -g -a claude-code` (or plugin: `/plugin marketplace add apollographql/skills` then `/plugin install apollo-skills@apollo-marketplace`) | yes, 9dda1397730370aeb8df4ff8f2015c34c86b5003 |
-| Async Rust | `rust-async-patterns` | https://github.com/wshobson/agents (`plugins/systems-programming/skills/rust-async-patterns`) | `npx skills add wshobson/agents --skill rust-async-patterns -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
-| Rust tests | `rust-testing` | https://github.com/affaan-m/ECC (`skills/rust-testing`) | `npx skills add affaan-m/ECC --skill rust-testing -g -a claude-code` (the repo's plugin, `/plugin marketplace add https://github.com/affaan-m/ECC` then `/plugin install ecc@ecc`, is a large bundle) | yes, d2ef2680594f9a17526a6e1a2e18b3d242c5d17b |
+| Idiomatic Rust | `rust-best-practices` | https://github.com/apollographql/skills | `npx skills add apollographql/skills@9dda1397730370aeb8df4ff8f2015c34c86b5003 --skill rust-best-practices -g -a claude-code` (or plugin: `/plugin marketplace add apollographql/skills` then `/plugin install apollo-skills@apollo-marketplace`) | yes, 9dda1397730370aeb8df4ff8f2015c34c86b5003 |
+| Async Rust | `rust-async-patterns` | https://github.com/wshobson/agents (`plugins/systems-programming/skills/rust-async-patterns`) | `npx skills add wshobson/agents@9c61ab243def98f72da12abd41cfcf5bcd91af9d --skill rust-async-patterns -g -a claude-code` | yes, 9c61ab243def98f72da12abd41cfcf5bcd91af9d |
+| Rust tests | `rust-testing` | https://github.com/affaan-m/ECC (`skills/rust-testing`) | `npx skills add affaan-m/ECC@d2ef2680594f9a17526a6e1a2e18b3d242c5d17b --skill rust-testing -g -a claude-code` (the repo's plugin, `/plugin marketplace add https://github.com/affaan-m/ECC` then `/plugin install ecc@ecc`, is a large bundle) | yes, d2ef2680594f9a17526a6e1a2e18b3d242c5d17b |
 
 ## Other backend
 
@@ -106,4 +106,4 @@ All six come from the `python-development` plugin of wshobson/agents, and each i
 | Role | Skill | Source | Install | Vetted |
 |---|---|---|---|---|
 | Plain, human-sounding prose | `humanizer` | https://github.com/blader/humanizer | `/plugin marketplace add blader/humanizer` then `/plugin install humanizer@humanizer` | not yet |
-| Remove AI-writing tells | `no-ai-slop` | https://github.com/petergyang/no-ai-slop | `npx skills add petergyang/no-ai-slop --skill no-ai-slop --global --yes` | yes, 000650b156983f5159695b441477f4e63b25dc85 |
+| Remove AI-writing tells | `no-ai-slop` | https://github.com/petergyang/no-ai-slop | `npx skills add petergyang/no-ai-slop@000650b156983f5159695b441477f4e63b25dc85 --skill no-ai-slop --global --yes` | yes, 000650b156983f5159695b441477f4e63b25dc85 |
