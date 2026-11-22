@@ -7,6 +7,8 @@ description: Entry point for ANY task that writes, changes, reviews or designs c
 
 One entry point. Load it before writing or changing code, then follow the steps in order. Skip a step only when it clearly does not apply to the task (a one-line fix does not need a stack decision), and say which step you skipped. The skills named below are listed with their sources in "Skills by area"; if one is not installed, follow the step without it.
 
+Subagents follow this skill too: each one that writes or reviews code loads it itself; a reviewer accepts a subagent's work only when its report shows the skill was loaded and the steps ran.
+
 ## 0. Stack first
 
 Choose the tech stack by fit to the problem, not by what is already installed. Installing a toolchain is normal and expected: if Go, Rust, TypeScript, Java or anything else is the best match, it goes first and the toolchain gets installed. Read `stack-selection.md` in this folder for the rubric and the decision record.

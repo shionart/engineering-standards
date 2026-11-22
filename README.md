@@ -31,11 +31,12 @@ The rules that always apply:
 
 ## The gate
 
-The plugin registers four hooks (`hooks/hooks.json`):
+The plugin registers five hooks (`hooks/hooks.json`):
 
-- `PreToolUse` (`gate`): blocks Edit, Write, NotebookEdit, MultiEdit and Bash calls that write a code or script file until the skill has been used in the current session.
-- `PostToolUse` on the Skill tool (`mark`): records that the skill was used.
-- `SessionStart` (`reset`): forgets it again on a new session, resume, clear or compaction.
+- `PreToolUse` (`gate`): blocks Edit, Write, NotebookEdit, MultiEdit and Bash calls that write a code or script file until the calling agent has used the skill. Subagents share the parent's session id, so the flag is kept per agent: the main agent loading the skill does not unlock its subagents, and each subagent must load it itself.
+- `PostToolUse` on the Skill tool (`mark`): records that the calling agent (main or subagent) used the skill.
+- `SessionStart` (`reset`): forgets it again, for the main agent and every subagent, on a new session, resume, clear or compaction.
+- `SubagentStop` (`agent_stop`): forgets the flag of the subagent that finished.
 - `Stop` (`reply`): on by default. It sends a reply back if it lacks a closing block (Updated, Created, Removed, Not done, and a line naming relevant skills not used). Turn it off with `ENG_STANDARDS_REPLY_CHECK=0`.
 
 Limits: a Bash command that hides the write in a way the patterns do not see (for example a script file that writes code) is not caught. The hook allows the call when its input cannot be read, or when no Python 3.10+ is found, so a bug here never locks every tool.
@@ -57,7 +58,7 @@ Python 3.10 or newer and bash. On Windows, Claude Code runs hooks through Git Ba
 
 | Variable | Effect |
 |---|---|
-| `ENG_STANDARDS_STATE_DIR` | Folder for the per-session flag files. Default: `$CLAUDE_PLUGIN_DATA/state` when installed as a plugin, otherwise `~/.claude/engineering-standards-gate/state`. |
+| `ENG_STANDARDS_STATE_DIR` | Folder for the flag files (one folder per session, one file per agent). Default: `$CLAUDE_PLUGIN_DATA/state` when installed as a plugin, otherwise `~/.claude/engineering-standards-gate/state`. |
 | `ENG_STANDARDS_REPLY_CHECK` | Closing-block check on the `Stop` hook, on by default. Set to `0`, `false`, `off` or `no` (any case) to turn it off. Any other value, or unset, leaves it on. |
 
 Set them in the `env` block of your Claude Code user settings file:

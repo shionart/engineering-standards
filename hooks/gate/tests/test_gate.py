@@ -88,7 +88,44 @@ class FlagStoreTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             store = FlagStore(Path(folder))
             store.mark("../evil")
-            self.assertEqual([p.parent for p in Path(folder).rglob("*") if p.is_file()], [Path(folder)])
+            store.mark("../evil", "../../agent")
+            files = [p for p in Path(folder).rglob("*") if p.is_file()]
+            self.assertEqual(len(files), 2)
+            for path in files:
+                self.assertTrue(path.resolve().is_relative_to(Path(folder).resolve()), path)
+
+    def test_each_agent_has_its_own_flag_inside_a_session(self):
+        with tempfile.TemporaryDirectory() as folder:
+            store = FlagStore(Path(folder))
+            store.mark("s1", "a1")
+            self.assertTrue(store.has("s1", "a1"))
+            self.assertFalse(store.has("s1"))  # the main agent is not unlocked
+            self.assertFalse(store.has("s1", "a2"))
+            self.assertFalse(store.has("s2", "a1"))
+            store.mark("s1")
+            self.assertTrue(store.has("s1"))
+            store.clear("s1", "a1")
+            self.assertFalse(store.has("s1", "a1"))
+            self.assertTrue(store.has("s1"))  # clearing one agent leaves the others
+
+    def test_an_agent_called_main_is_not_the_main_agent(self):
+        with tempfile.TemporaryDirectory() as folder:
+            store = FlagStore(Path(folder))
+            store.mark("s1", "main")
+            self.assertFalse(store.has("s1"))
+
+    def test_clear_session_removes_main_and_every_agent_of_that_session_only(self):
+        with tempfile.TemporaryDirectory() as folder:
+            store = FlagStore(Path(folder))
+            store.mark("s1")
+            store.mark("s1", "a1")
+            store.mark("s1", "a2")
+            store.mark("s2")
+            store.mark("s2", "a1")
+            store.clear_session("s1")
+            self.assertFalse(any([store.has("s1"), store.has("s1", "a1"), store.has("s1", "a2")]))
+            self.assertTrue(store.has("s2") and store.has("s2", "a1"))
+            store.clear_session("s1")  # clearing twice is harmless
 
 
 class HandleTests(unittest.TestCase):
@@ -111,6 +148,68 @@ class HandleTests(unittest.TestCase):
         self.assertEqual(handle("mark", skill, self.store, self.config).exit_code, 0)
         self.assertEqual(handle("gate", self.edit_payload(), self.store, self.config).exit_code, 0)
         self.assertEqual(handle("gate", self.edit_payload(session="s2"), self.store, self.config).exit_code, 2)
+
+    def skill_payload(self, session="s1", agent_id=None, skill="engineering-standards"):
+        payload = {"session_id": session, "tool_name": "Skill", "tool_input": {"skill": skill}}
+        if agent_id:
+            payload["agent_id"] = agent_id
+            payload["agent_type"] = "general-purpose"
+        return payload
+
+    def agent_edit(self, agent_id, session="s1"):
+        return {**self.edit_payload(session=session), "agent_id": agent_id, "agent_type": "general-purpose"}
+
+    def gate_code(self, payload):
+        return handle("gate", payload, self.store, self.config).exit_code
+
+    def test_a_subagent_is_blocked_even_when_the_main_agent_loaded_the_skill(self):
+        handle("mark", self.skill_payload(), self.store, self.config)
+        self.assertEqual(self.gate_code(self.edit_payload()), 0)
+        self.assertEqual(self.gate_code(self.agent_edit("a1")), 2)
+
+    def test_a_subagent_that_loaded_the_skill_itself_passes(self):
+        handle("mark", self.skill_payload(agent_id="a1"), self.store, self.config)
+        self.assertEqual(self.gate_code(self.agent_edit("a1")), 0)
+
+    def test_a_subagent_mark_does_not_unlock_the_main_agent_or_another_subagent(self):
+        handle("mark", self.skill_payload(agent_id="a1"), self.store, self.config)
+        self.assertEqual(self.gate_code(self.edit_payload()), 2)
+        self.assertEqual(self.gate_code(self.agent_edit("a2")), 2)
+        self.assertEqual(self.gate_code(self.agent_edit("a1", session="s2")), 2)
+
+    def test_the_block_message_tells_subagents_to_load_the_skill_themselves(self):
+        message = handle("gate", self.agent_edit("a1"), self.store, self.config).message
+        self.assertIn("subagent", message.lower())
+
+    def test_a_missing_or_empty_agent_id_is_the_main_agent(self):
+        handle("mark", {**self.skill_payload(), "agent_id": ""}, self.store, self.config)
+        self.assertEqual(self.gate_code(self.edit_payload()), 0)
+        self.assertEqual(self.gate_code({**self.edit_payload(), "agent_id": ""}), 0)
+
+    def test_a_session_start_clears_the_main_agent_and_every_subagent_of_that_session_only(self):
+        for session in ("s1", "s2"):
+            handle("mark", self.skill_payload(session=session), self.store, self.config)
+            handle("mark", self.skill_payload(session=session, agent_id="a1"), self.store, self.config)
+        handle("reset", {"session_id": "s1", "source": "compact"}, self.store, self.config)
+        self.assertEqual(self.gate_code(self.edit_payload()), 2)
+        self.assertEqual(self.gate_code(self.agent_edit("a1")), 2)
+        self.assertEqual(self.gate_code(self.edit_payload(session="s2")), 0)
+        self.assertEqual(self.gate_code(self.agent_edit("a1", session="s2")), 0)
+
+    def test_a_finished_subagent_forgets_its_flag_and_leaves_the_others(self):
+        handle("mark", self.skill_payload(), self.store, self.config)
+        handle("mark", self.skill_payload(agent_id="a1"), self.store, self.config)
+        handle("mark", self.skill_payload(agent_id="a2"), self.store, self.config)
+        stop = {"session_id": "s1", "hook_event_name": "SubagentStop", "agent_id": "a1", "agent_type": "general-purpose"}
+        self.assertEqual(handle("agent_stop", stop, self.store, self.config).exit_code, 0)
+        self.assertEqual(self.gate_code(self.agent_edit("a1")), 2)
+        self.assertEqual(self.gate_code(self.agent_edit("a2")), 0)
+        self.assertEqual(self.gate_code(self.edit_payload()), 0)
+
+    def test_agent_stop_without_an_agent_id_changes_nothing(self):
+        handle("mark", self.skill_payload(), self.store, self.config)
+        handle("agent_stop", {"session_id": "s1"}, self.store, self.config)
+        self.assertEqual(self.gate_code(self.edit_payload()), 0)
 
     def test_another_skill_does_not_unlock_the_gate(self):
         other = {"session_id": "s1", "tool_name": "Skill", "tool_input": {"skill": "impeccable"}}

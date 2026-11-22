@@ -1,5 +1,5 @@
 {
-  "description": "Blocks code writes until the engineering-standards skill was used in the session.",
+  "description": "Blocks code writes until each agent (main and every subagent) has used the engineering-standards skill.",
   "hooks": {
     "PreToolUse": [
       {
@@ -13,6 +13,13 @@
       {
         "hooks": [
           { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" reset", "timeout": 10 }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" agent_stop", "timeout": 10 }
         ]
       }
     ],

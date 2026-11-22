@@ -1,10 +1,14 @@
 """Entry point of the engineering-standards gate, called by Claude Code hooks.
 
-  hook.py gate    PreToolUse   blocks code writes until the skill was used in this session
-  hook.py mark    PostToolUse  on the Skill tool: remembers that engineering-standards was used
-  hook.py reset   SessionStart forgets it again (new session, resume, compaction, clear)
+  hook.py gate    PreToolUse   blocks code writes until the skill was used by the calling agent
+  hook.py mark    PostToolUse  on the Skill tool: remembers that the calling agent used engineering-standards
+  hook.py reset   SessionStart forgets it for the main agent and every subagent of the session
+  hook.py agent_stop SubagentStop forgets it for the subagent that just finished
   hook.py reply   Stop         (on by default, off with ENG_STANDARDS_REPLY_CHECK=0) sends a reply back when it lacks the closing block (Updated, Created,
                                Removed, Not done, Relevant skill(s) not used)
+
+Subagents share the parent's session_id, so the flag is keyed by (session_id, agent_id). Hook input
+carries agent_id only when the call happens inside a subagent; without it the caller is the main agent.
 
 Exit code 2 blocks the tool call and shows the message to Claude. Any problem reading the
 input allows the call: a broken hook must never lock every tool.
@@ -23,7 +27,8 @@ from transcript import last_reply_text
 
 BLOCK_MESSAGE = (
     "BLOCKED by the engineering-standards gate. This call writes or changes code or a script, and the "
-    "`engineering-standards` skill has not been used in this session (or the context was reset). "
+    "`engineering-standards` skill has not been used by this agent in this session (or the context was reset). "
+    "Each agent must load it itself: a subagent does not inherit it from the main agent or from another subagent. "
     "Call the Skill tool with skill \"engineering-standards\", follow it (stack, plan, design, tests first), "
     "then retry this call. This rule comes from the project's engineering standards and has no exceptions."
 )
@@ -55,13 +60,17 @@ def handle(
     session = payload.get("session_id")
     if not session:
         return Result(0)
+    agent = payload.get("agent_id") or None  # absent or empty: the main agent
     if mode == "reset":
-        store.clear(session)
+        store.clear_session(session)
+    elif mode == "agent_stop":
+        if agent:
+            store.clear(session, agent)
     elif mode == "mark":
         if payload.get("tool_name") == "Skill" and is_standards_skill((payload.get("tool_input") or {}).get("skill")):
-            store.mark(session)
+            store.mark(session, agent)
     elif mode == "gate":
-        if needs_gate(payload.get("tool_name", ""), payload.get("tool_input") or {}) and not store.has(session):
+        if needs_gate(payload.get("tool_name", ""), payload.get("tool_input") or {}) and not store.has(session, agent):
             return Result(2, BLOCK_MESSAGE)
     return Result(0)
 
