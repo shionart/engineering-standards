@@ -19,7 +19,7 @@ Skills are not bundled with the plugin. Each has its own licence and update cycl
 | Clarify an unclear goal | `superpowers-brainstorming` | https://github.com/obra/superpowers | `/plugin install superpowers@claude-plugins-official` (or `/plugin marketplace add obra/superpowers-marketplace` then `/plugin install superpowers@superpowers-marketplace`) | not yet |
 | Write a step-by-step plan | `superpowers-writing-plans` | https://github.com/obra/superpowers | same plugin as above | not yet |
 | Design deep modules | `codebase-design` | https://github.com/mattpocock/skills | `npx skills add mattpocock/skills@4ae2317ddb22b046e26455e4f9c9b3aaaf62212d --skill codebase-design -g -a claude-code` (or plugin: `/plugin install mattpocock-skills@claude-plugins-official`) | yes, 4ae2317ddb22b046e26455e4f9c9b3aaaf62212d |
-| Improve an existing codebase's structure | `improve-codebase-architecture` | https://github.com/mattpocock/skills | `npx skills add mattpocock/skills@4ae2317ddb22b046e26455e4f9c9b3aaaf62212d --skill improve-codebase-architecture -g -a claude-code` | yes, 4ae2317ddb22b046e26455e4f9c9b3aaaf62212d |
+| Improve an existing codebase's structure (user-invoked only: its frontmatter sets `disable-model-invocation: true`, so the user runs `/improve-codebase-architecture`) | `improve-codebase-architecture` | https://github.com/mattpocock/skills | `npx skills add mattpocock/skills@4ae2317ddb22b046e26455e4f9c9b3aaaf62212d --skill improve-codebase-architecture -g -a claude-code` | yes, 4ae2317ddb22b046e26455e4f9c9b3aaaf62212d |
 
 ## UI/UX design
 

@@ -35,7 +35,7 @@ For anything bigger than a quick fix, use `superpowers-writing-plans` (or `super
 
 Never cut validation at trust boundaries, error handling that prevents data loss, security or accessibility to make code smaller. (Adapted from DietrichGebert/ponytail, MIT.)
 
-**Then design.** New structure or a messy module: use `codebase-design`, and `improve-codebase-architecture` for existing code. Add the language skills from the table. If the language has none, look for one with `find-skills` and vet it as described in `vetted-skills.md` before installing. Do not install unvetted skills.
+**Then design.** New structure or a messy module: use `codebase-design`, and for existing code suggest the user runs `/improve-codebase-architecture` (it is user-invoked only, so you cannot call it yourself). Add the language skills from the table. If the language has none, look for one with `find-skills` and vet it as described in `vetted-skills.md` before installing. Do not install unvetted skills.
 
 ## 3. Rules that always apply (SOLID in practice)
 

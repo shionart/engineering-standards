@@ -9,9 +9,10 @@ disable-model-invocation: true
 Run only when the user invokes `/engineering-standards:setup`.
 
 1. Read `companion-skills.md`. Its path relative to this skill is `../engineering-standards/companion-skills.md`; use the base directory shown when this skill was loaded.
-2. Compare each default skill in the catalog with the list of available skills in your context. Superpowers skills count as installed under either name, `superpowers-brainstorming` or `superpowers:brainstorming`.
+2. Compare each default skill in the catalog with the list of available skills in your context. Superpowers skills count as installed under either name, `superpowers-brainstorming` or `superpowers:brainstorming`. A skill whose frontmatter has `disable-model-invocation: true` never appears in that list, so before calling a skill missing, check whether `~/.claude/skills/<name>/SKILL.md` exists.
 3. Print one table with the columns role, default, status and install command. Status is one of:
    - `installed`
+   - `installed, user-invoked only` when the folder exists but the skill is hidden from you; the user runs it as `/<name>`
    - `covered by <installed skill>` when another installed skill does the same job
    - `missing`
    - `built in` for skills that ship with Claude Code
