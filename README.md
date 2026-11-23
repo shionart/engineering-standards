@@ -94,6 +94,38 @@ The workflow names other skills for specific areas. They are not bundled, becaus
 
 A Bash command that hides the write in a way the patterns do not see (for example a script file that writes code) is not caught. The hook allows the call when its input cannot be read, or when no Python 3.10+ is found, so a bug here never locks every tool.
 
+## Evals
+
+The `evals/` folder holds four small cases for `claude plugin eval`. Each case copies a tiny fixture workspace, gives the agent a task, and scores the result with deterministic checks (regex on the files the agent wrote). The skill-fired check is only an indicator and is not scored.
+
+| Case | What it checks |
+|---|---|
+| `fix-shared-rounding-bug` | The rounding bug is fixed once in the shared `to_cents`, not patched in its two callers, and a regression test is added. |
+| `dockerfile-small-app` | Pinned non-`latest` slim or multi-stage base, non-root `USER`, non-empty `.dockerignore` that lists `.git`. |
+| `sqlite-status-rename` | The script has a dry run or a backup, filters on the old value, and reports a row count. |
+| `api-key-feature` | The key is not hard-coded, config lives in one module, and raised errors carry context. |
+
+Run one case against the plugin and a no-plugin baseline (the default when the target is a plugin path):
+
+```
+claude plugin eval . --case dockerfile-small-app --runs 1 --scaffold --allow-tools Write Edit --trust-plugin --no-publish
+```
+
+Notes: `--scaffold` is needed so the fixture is copied in. Shell tools are not granted because this Windows build has no sandbox for them, so the agent cannot run code or Docker and the checks are static (no `hadolint` run). `--runs` defaults to 3.
+
+Pilot, 23 Nov 2026, Claude Code 2.1.295, model claude-opus-5-5, 1 run per case and arm. Only the first two cases were run: a full pass of 4 cases x 2 arms was estimated at about 1M tokens (cache reads included), above the 400k budget for this pass.
+
+| Case | With plugin | Without plugin | Tokens with / without | Cost with / without |
+|---|---|---|---|---|
+| `fix-shared-rounding-bug` | pass (1.0) | pass (1.0) | 98k / 66k | $0.19 / $0.13 |
+| `dockerfile-small-app` | pass (1.0) | pass (1.0) | 81k / 48k | $0.16 / $0.10 |
+| `sqlite-status-rename` | not run | not run | | |
+| `api-key-feature` | not run | not run | | |
+
+Token counts are input plus cache plus output, read from the run trace (the JSON reports cost, not tokens). Raw results are in `evals/results/`. The first pass of the rounding case scored 0.8 in both arms because one check matched a code comment; the check was tightened and the case rerun.
+
+Sample size: one trial per case and arm. This is not statistically meaningful. It shows the suite runs and the checks are sound, not that the skill helps or does not help. On these two tasks the baseline model already did the right thing, so the cases do not yet separate the two arms; the skill cost about 50% more tokens. Harder cases and more runs are needed.
+
 ## Tests
 
 ```

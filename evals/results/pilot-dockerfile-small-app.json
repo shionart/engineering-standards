@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.295",
+  "startedAt": "2026-11-23T12:11:41.440Z",
+  "durationSeconds": 49,
+  "costUsd": 0.2637488,
+  "partial": false,
+  "suite": {
+    "root": "C:\\Users\\development\\projects\\claude-skills\\engineering-standards",
+    "ablation": "with-without",
+    "caseFilter": "dockerfile-small-app",
+    "threshold": 1,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "engineering-standards",
+        "version": "1.4.0",
+        "path": "C:\\Users\\development\\projects\\claude-skills\\engineering-standards"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "dockerfile-small-app",
+      "dir": "evals\\dockerfile-small-app",
+      "source": "mixed",
+      "promptMarkdown": "Add a Dockerfile for this small Python web app (served with gunicorn on port 8000, module `app:app`). Create the Dockerfile and anything else a good container build needs. You cannot run Docker in this session.",
+      "runsPerCase": 1,
+      "timeoutSeconds": 600,
+      "maxTurns": 20,
+      "graders": [
+        {
+          "name": "dockerignore-has-git",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": ".dockerignore"
+            },
+            "pattern": "\\.git",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "dockerignore-non-empty",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": ".dockerignore"
+            },
+            "pattern": "\\S",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "non-root-user",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": "Dockerfile"
+            },
+            "pattern": "^USER\\s+(?!root\\b)\\S+",
+            "flags": "m",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "pinned-not-latest",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": "Dockerfile"
+            },
+            "pattern": ":latest",
+            "flags": "",
+            "match": "not_contains"
+          }
+        },
+        {
+          "name": "pinned-version-tag",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": "Dockerfile"
+            },
+            "pattern": "^FROM\\s+\\S+:\\d",
+            "flags": "m",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "input_match": "\"skill\"\\s*:\\s*\"(?:[\\w-]+:)?engineering-standards\""
+          }
+        },
+        {
+          "name": "slim-or-multistage",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": "Dockerfile"
+            },
+            "pattern": "slim|alpine|^FROM\\s+.+\\s+AS\\s+\\w+",
+            "flags": "mi",
+            "match": "contains"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 11,
+            "costUsd": 0.1644246,
+            "judgeCostUsd": 0,
+            "durationSeconds": 30,
+            "startedAt": "2026-11-23T12:11:41.610Z",
+            "error": null,
+            "tracePath": "C:\\Users\\development\\AppData\\Local\\Temp\\claude-eval-7f5Lgg\\out\\trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "dockerignore-has-git",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \\.git",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "dockerignore-non-empty",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \\S",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "non-root-user",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched ^USER\\s+(?!root\\b)\\S+",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "pinned-not-latest",
+                "passed": true,
+                "weight": 1,
+                "explanation": "pattern absent as expected",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "pinned-version-tag",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched ^FROM\\s+\\S+:\\d",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              },
+              {
+                "name": "slim-or-multistage",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched slim|alpine|^FROM\\s+.+\\s+AS\\s+\\w+",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 7,
+            "costUsd": 0.0993242,
+            "judgeCostUsd": 0,
+            "durationSeconds": 19,
+            "startedAt": "2026-11-23T12:12:12.095Z",
+            "error": null,
+            "tracePath": "C:\\Users\\development\\AppData\\Local\\Temp\\claude-eval-F8H4Ut\\out\\trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "dockerignore-has-git",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \\.git",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "dockerignore-non-empty",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \\S",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "non-root-user",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched ^USER\\s+(?!root\\b)\\S+",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "pinned-not-latest",
+                "passed": true,
+                "weight": 1,
+                "explanation": "pattern absent as expected",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "pinned-version-tag",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched ^FROM\\s+\\S+:\\d",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "slim-or-multistage",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched slim|alpine|^FROM\\s+.+\\s+AS\\s+\\w+",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 1,
+        "passRate": 1,
+        "scoreWithout": 1,
+        "passRateWithout": 1,
+        "delta": 0
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 1,
+    "overallScore": 1,
+    "overallPassRate": 1,
+    "meanDelta": 0
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.295",
+  "startedAt": "2026-11-23T12:12:46.381Z",
+  "durationSeconds": 67,
+  "costUsd": 0.3216854,
+  "partial": false,
+  "suite": {
+    "root": "C:\\Users\\development\\projects\\claude-skills\\engineering-standards",
+    "ablation": "with-without",
+    "caseFilter": "fix-shared-rounding-bug",
+    "threshold": 1,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "engineering-standards",
+        "version": "1.4.0",
+        "path": "C:\\Users\\development\\projects\\claude-skills\\engineering-standards"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "fix-shared-rounding-bug",
+      "dir": "evals\\fix-shared-rounding-bug",
+      "source": "mixed",
+      "promptMarkdown": "Customers report that an invoice for an item priced 0.29 shows 28 cents instead of 29, and some cart totals are one cent short. The code is in the `shop` package with tests in `tests/`. Fix the bug. You cannot run code in this session, so reason carefully and leave the repository in a state where `python -m unittest` would pass.",
+      "runsPerCase": 1,
+      "timeoutSeconds": 600,
+      "maxTurns": 30,
+      "graders": [
+        {
+          "name": "cart-not-patched",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": "shop/cart.py"
+            },
+            "pattern": "round|quantize|Decimal",
+            "flags": "",
+            "match": "not_contains"
+          }
+        },
+        {
+          "name": "fix-in-shared-function",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": "shop/money.py"
+            },
+            "pattern": "round|quantize|Decimal",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "invoice-not-patched",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": "shop/invoice.py"
+            },
+            "pattern": "round|quantize|Decimal",
+            "flags": "",
+            "match": "not_contains"
+          }
+        },
+        {
+          "name": "regression-test-added",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": "tests/test_money.py"
+            },
+            "pattern": "0\\.29|1\\.15|19\\.99|2\\.675",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "input_match": "\"skill\"\\s*:\\s*\"(?:[\\w-]+:)?engineering-standards\""
+          }
+        },
+        {
+          "name": "truncation-gone",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": "shop/money.py"
+            },
+            "pattern": "return\\s+int\\(\\s*amount\\s*\\*\\s*100\\s*\\)",
+            "flags": "",
+            "match": "not_contains"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 13,
+            "costUsd": 0.1895248,
+            "judgeCostUsd": 0,
+            "durationSeconds": 40,
+            "startedAt": "2026-11-23T12:12:46.555Z",
+            "error": null,
+            "tracePath": "C:\\Users\\development\\AppData\\Local\\Temp\\claude-eval-WXQDJ7\\out\\trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "cart-not-patched",
+                "passed": true,
+                "weight": 1,
+                "explanation": "pattern absent as expected",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "fix-in-shared-function",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched round|quantize|Decimal",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "invoice-not-patched",
+                "passed": true,
+                "weight": 1,
+                "explanation": "pattern absent as expected",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "regression-test-added",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched 0\\.29|1\\.15|19\\.99|2\\.675",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              },
+              {
+                "name": "truncation-gone",
+                "passed": true,
+                "weight": 1,
+                "explanation": "pattern absent as expected",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 10,
+            "costUsd": 0.1321606,
+            "judgeCostUsd": 0,
+            "durationSeconds": 27,
+            "startedAt": "2026-11-23T12:13:26.536Z",
+            "error": null,
+            "tracePath": "C:\\Users\\development\\AppData\\Local\\Temp\\claude-eval-PAw8ki\\out\\trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "cart-not-patched",
+                "passed": true,
+                "weight": 1,
+                "explanation": "pattern absent as expected",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "fix-in-shared-function",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched round|quantize|Decimal",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "invoice-not-patched",
+                "passed": true,
+                "weight": 1,
+                "explanation": "pattern absent as expected",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "regression-test-added",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched 0\\.29|1\\.15|19\\.99|2\\.675",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "truncation-gone",
+                "passed": true,
+                "weight": 1,
+                "explanation": "pattern absent as expected",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 1,
+        "passRate": 1,
+        "scoreWithout": 1,
+        "passRateWithout": 1,
+        "delta": 0
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 1,
+    "overallScore": 1,
+    "overallPassRate": 1,
+    "meanDelta": 0
+  }
+}
