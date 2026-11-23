@@ -103,6 +103,10 @@ class ReplyGateTests(unittest.TestCase):
     def test_the_reply_message_is_neutral(self):
         self.assertNotIn("owner", self.run_reply("All done.").message.lower())
 
+    def test_the_reply_message_says_how_to_turn_the_check_off(self):
+        message = self.run_reply("All done.").message
+        self.assertTrue(message.endswith("To turn this check off, set ENG_STANDARDS_REPLY_CHECK=0."))
+
     def test_a_complete_reply_finishes(self):
         self.assertEqual(self.run_reply(GOOD).exit_code, 0)
 

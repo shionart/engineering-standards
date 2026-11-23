@@ -5,13 +5,28 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
+from gate_rules import CODE_EXTENSIONS
+
 DEFAULT_STATE_DIR = Path.home() / ".claude" / "engineering-standards-gate" / "state"
+_OFF_VALUES = ("0", "false", "off", "no")
+
+
+def _is_on(env: Mapping[str, str], name: str) -> bool:
+    """On by default. Only an explicit "off" value turns a switch off."""
+    return env.get(name, "").strip().lower() not in _OFF_VALUES
+
+
+def _extensions(text: str) -> tuple[str, ...]:
+    names = (part.strip().lstrip(".").lower() for part in text.split(","))
+    return tuple(name for name in names if name)
 
 
 @dataclass(frozen=True)
 class Config:
     state_dir: Path
     reply_check: bool
+    gate: bool = True
+    code_extensions: tuple[str, ...] = CODE_EXTENSIONS
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] = os.environ) -> "Config":
@@ -21,7 +36,11 @@ class Config:
             state_dir = Path(env["CLAUDE_PLUGIN_DATA"]) / "state"
         else:
             state_dir = DEFAULT_STATE_DIR
-        # The closing-block check is on by default. Only an explicit "off" value turns it off.
-        reply_setting = env.get("ENG_STANDARDS_REPLY_CHECK", "").strip().lower()
-        reply_check = reply_setting not in ("0", "false", "off", "no")
-        return cls(state_dir=state_dir, reply_check=reply_check)
+        return cls(
+            state_dir=state_dir,
+            reply_check=_is_on(env, "ENG_STANDARDS_REPLY_CHECK"),
+            gate=_is_on(env, "ENG_STANDARDS_GATE"),
+            code_extensions=tuple(
+                dict.fromkeys(CODE_EXTENSIONS + _extensions(env.get("ENG_STANDARDS_EXTRA_EXTENSIONS", "")))
+            ),
+        )

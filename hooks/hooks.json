@@ -1,9 +1,9 @@
 {
-  "description": "Blocks code writes until each agent (main and every subagent) has used the engineering-standards skill.",
+  "description": "Blocks code writes (file tools, shell commands, MCP file tools) until each agent (main and every subagent) has used the engineering-standards skill.",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit|Write|NotebookEdit|MultiEdit|Bash",
+        "matcher": "^(Edit|Write|NotebookEdit|MultiEdit|Bash|PowerShell|mcp__.+__.*([Ww]rite|[Ee]dit|[Cc]reate|[Mm]ove|[Cc]opy|[Aa]ppend|[Pp]atch|[Uu]pdate|[Ss]ave|[Pp]ut|[Uu]pload|[Ii]nsert|[Rr]eplace|[Rr]ename).*)$",
         "hooks": [
           { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" gate", "timeout": 10 }
         ]

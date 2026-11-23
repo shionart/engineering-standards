@@ -4,15 +4,21 @@ Layout: <folder>/<session>/main.flag for the main agent and <folder>/<session>/a
 each subagent, so one session folder can be wiped in a single step.
 """
 
+import os
 import re
 import shutil
 from pathlib import Path
 
 _MAIN_FLAG = "main.flag"
+MAX_AGE_SECONDS = 7 * 24 * 3600
 
 
 def _safe(text: str) -> str:
     return re.sub(r"[^A-Za-z0-9_-]", "_", text)
+
+
+def _newest_mtime(folder: Path) -> float:
+    return max([folder.stat().st_mtime, *(child.stat().st_mtime for child in folder.iterdir())])
 
 
 class FlagStore:
@@ -39,3 +45,21 @@ class FlagStore:
 
     def clear_session(self, session_id: str) -> None:
         shutil.rmtree(self._session_folder(session_id), ignore_errors=True)
+
+    def refresh(self, session_id: str, agent_id: str | None, now: float) -> None:
+        """Mark the flag as used just now, so an active session is never pruned. `now` is the clock."""
+        try:
+            os.utime(self._file(session_id, agent_id), (now, now))
+        except FileNotFoundError:
+            pass
+
+    def prune(self, now: float) -> None:
+        """Delete session folders whose newest file or folder is older than MAX_AGE_SECONDS. `now` is the clock."""
+        if not self._folder.is_dir():
+            return
+        for entry in self._folder.iterdir():
+            try:
+                if entry.is_dir() and _newest_mtime(entry) < now - MAX_AGE_SECONDS:
+                    shutil.rmtree(entry, ignore_errors=True)
+            except OSError:  # removed by another process in the meantime
+                continue

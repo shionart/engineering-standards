@@ -44,33 +44,44 @@ The rules that always apply:
 
 The plugin registers five hooks (`hooks/hooks.json`):
 
-- `PreToolUse` (`gate`): blocks Edit, Write, NotebookEdit, MultiEdit and Bash calls that write a code or script file until the calling agent has used the skill.
+- `PreToolUse` (`gate`): blocks a call that writes a code or script file until the calling agent has used the skill. It looks at the Edit, Write, NotebookEdit and MultiEdit tools, at Bash and PowerShell commands, and at MCP tools whose tool name (the part after the last `__`) has one of these as a whole word (`writeFile`, `update_file`; not `get_output`): write, edit, create, move, copy, append, patch, update, save, put, upload, insert, replace or rename and whose path argument is a code file. The hook matcher in `hooks.json` lets only these MCP tools start the hook, so MCP reads cost nothing.
 - `PostToolUse` on the Skill tool (`mark`): records that the calling agent (main or subagent) used the skill.
-- `SessionStart` (`reset`): forgets it again, for the main agent and every subagent, on a new session, resume, clear or compaction.
+- `SessionStart` (`reset`): forgets it again, for the main agent and every subagent, on a new session, resume, clear or compaction. It also deletes flag folders of sessions not used for 7 days. Every allowed gate check refreshes the caller's flag, so a session in use is never deleted.
 - `SubagentStop` (`agent_stop`): forgets the flag of the subagent that finished.
 - `Stop` (`reply`): sends a reply back if it lacks a closing block (Updated, Created, Removed, Not done, and a line naming relevant skills not used).
 
+What counts as writing code:
+
+- Files with a code extension: `rs py ts tsx js jsx mjs cjs sh bash ps1 bat cmd sql java go cs kt swift rb php css scss html svelte vue c h cpp hpp toml ipynb pl pm groovy gradle tf lua dart scala ex exs r zig nim`, plus `Dockerfile`, `Containerfile`, `Makefile`, `Jenkinsfile`, `*.Dockerfile` and `Dockerfile.<suffix>` (not backup suffixes: `bak`, `orig`, `old`, `tmp`, `swp`, `save` or a trailing `~`). YAML, JSON, Markdown and text files are not gated on purpose. Add more types with `ENG_STANDARDS_EXTRA_EXTENSIONS`.
+- Shell commands that write such a file. A line is cut into its separate commands (at `;`, `&&`, `||`, `|` and newlines, not inside quotes), and each one is judged alone after removing wrappers (`env VAR=x`, `time`, `command`, `sudo`, `nohup`, `xargs`, `builtin`) and trailing redirections. The writers are `>` and `>>`, `tee`, `sed -i`, `cp`, `mv`, `install`, `curl` (`-o`, `--output`, or `-O` of a code-file URL), `wget` (`-O`, or a code-file URL without `-O`), a script that calls `write_text` or `open(..., "w")` on one, and the PowerShell cmdlets `Set-Content`, `Add-Content`, `Out-File`, `New-Item`, `Copy-Item` and `Move-Item`. A copy or move counts when the destination is a code file, or when it is a directory (or has no extension) and a source is a code file. Copying a code file to a backup name such as `x.py.bak` is not gated.
+- `git apply` and `patch`, unless that command itself is a dry run (`--check`, `--stat`, `--summary`, `--dry-run`). The patch content is not read, so any other use counts as a code write.
+
 Subagents share the parent's session id, so the flag is kept per agent. The main agent loading the skill does not unlock its subagents, and each subagent must load it itself.
 
-The closing-block check on `Stop` is on by default. Turn it off with `ENG_STANDARDS_REPLY_CHECK=0`.
+Both checks are on by default. Turn the gate off with `ENG_STANDARDS_GATE=0` and the closing-block check on `Stop` with `ENG_STANDARDS_REPLY_CHECK=0`. With the gate off, the other hooks keep running but nothing is blocked.
 
 ## Requirements
 
-Python 3.10 or newer and bash. On Windows, Claude Code runs hooks through Git Bash, so nothing more is needed there. Without a suitable Python the hooks do nothing and the skill still works.
+Python 3.10 or newer and bash. On Windows, Claude Code runs hooks through Git Bash, so nothing more is needed there. Without a suitable Python the gate does nothing and the skill still works; at session start Claude is told "engineering-standards gate is inactive: Python 3.10+ not found."
 
 ## Configuration
 
+All settings are read once from environment variables, and every feature is on by default.
+
 | Variable | Effect |
 |---|---|
-| `ENG_STANDARDS_STATE_DIR` | Folder for the flag files (one folder per session, one file per agent). Default: `$CLAUDE_PLUGIN_DATA/state` when installed as a plugin, otherwise `~/.claude/engineering-standards-gate/state`. |
+| `ENG_STANDARDS_GATE` | The code-write gate on `PreToolUse`, on by default. Set to `0`, `false`, `off` or `no` (any case) to turn it off. Any other value, or unset, leaves it on. |
+| `ENG_STANDARDS_EXTRA_EXTENSIONS` | Extra file types the gate treats as code, comma-separated, with or without the dot, for example `yaml,tpl`. Default: none. |
 | `ENG_STANDARDS_REPLY_CHECK` | Closing-block check on the `Stop` hook, on by default. Set to `0`, `false`, `off` or `no` (any case) to turn it off. Any other value, or unset, leaves it on. |
+| `ENG_STANDARDS_STATE_DIR` | Folder for the flag files (one folder per session, one file per agent). Default: `$CLAUDE_PLUGIN_DATA/state` when installed as a plugin, otherwise `~/.claude/engineering-standards-gate/state`. |
 
 Set them in the `env` block of your Claude Code user settings file:
 
 ```json
 {
   "env": {
-    "ENG_STANDARDS_REPLY_CHECK": "0"
+    "ENG_STANDARDS_REPLY_CHECK": "0",
+    "ENG_STANDARDS_EXTRA_EXTENSIONS": "yaml,tpl"
   }
 }
 ```
